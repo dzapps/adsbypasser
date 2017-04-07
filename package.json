@@ -25,12 +25,13 @@
     "zombie": "",
     "lodash": "",
     "wintersmith": "",
-    "wintersmith-less": ""
+    "wintersmith-less": "",
+    "webpack": ""
   },
   "scripts": {
-    "build": "gulp",
+    "build": "webpack",
     "clean": "gulp clean",
-    "test": "gulp test",
+    "test": "npm run build && mocha ./build/test.js",
     "deploy": "gulp deploy",
     "mirror": "gulp mirror"
   }
