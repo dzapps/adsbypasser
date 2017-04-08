@@ -17,6 +17,7 @@ import {
   warn,
   info,
 } from 'util/logger';
+import 'handlers';
 
 
 const isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
@@ -119,7 +120,7 @@ async function main () {
     return;
   }
 
-  GM.registerMenuCommand('AdsBypasser - Configure', function () {
+  GM.registerMenuCommand('AdsBypasser - Configure', () => {
     GM.openInTab('https://adsbypasser.github.io/configure.html');
   });
 

@@ -7,26 +7,12 @@
     "url": "https://github.com/adsbypasser/adsbypasser.git"
   },
   "devDependencies": {
-    "gulp": "",
-    "gulp-cli": "",
-    "vinyl-paths": "",
-    "del": "",
-    "gulp-concat": "",
-    "gulp-change": "",
-    "gulp-rename": "",
-    "gulp-strip-comments": "",
-    "gulp-remove-empty-lines": "",
-    "gulp-mocha": "",
-    "gulp-blanket-mocha": "",
-    "blanket": "",
     "chai": "",
-    "connect": "",
-    "serve-static": "",
-    "zombie": "",
     "lodash": "",
     "wintersmith": "",
     "wintersmith-less": "",
-    "webpack": ""
+    "webpack": "",
+    "glob": ""
   },
   "scripts": {
     "build": "webpack",

@@ -171,7 +171,7 @@ function loadConfig () {
       host: /^adsbypasser\.github\.io$/,
       path: /^\/configure\.html$/,
     },
-    ready: function () {
+    async ready () {
       uswProxy.commit = (data) => {
         data.version = config.version;
         forEach(data, (v, k) => {

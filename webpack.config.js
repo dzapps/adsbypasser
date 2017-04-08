@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const _ = require('lodash');
+const glob = require('glob');
 const webpack = require('webpack');
 
 
@@ -12,10 +13,13 @@ const commonConfig = {
   },
   resolve: {
     alias: {
-      util: path.resolve(__dirname, 'src', 'util'),
+      handlers: path.resolve(__dirname, 'build', 'handlers.js'),
     },
+    modules: [
+      path.resolve(__dirname, 'src'),
+      'node_modules',
+    ],
   },
-//   devtool: 'inline-source-map',
 };
 
 
@@ -28,12 +32,14 @@ const testConfig = Object.assign({
 
 const mainConfig = Object.assign({
   entry: {
-    'adsbypasser.user': './src/util/main.js',
+    'adsbypasser.user': createEntryPoint({
+      withImage: true,
+    }),
   },
   plugins: [
     new webpack.BannerPlugin({
       banner: createMetadata({
-        full: true,
+        withImage: true,
       }),
       raw: true,
     }),
@@ -43,12 +49,14 @@ const mainConfig = Object.assign({
 
 const liteConfig = Object.assign({
   entry: {
-    'adsbypasser.lite.user': './src/util/main.js',
+    'adsbypasser.lite.user': createEntryPoint({
+      withImage: false,
+    }),
   },
   plugins: [
     new webpack.BannerPlugin({
       banner: createMetadata({
-        full: false,
+        withImage: false,
       }),
       raw: true,
     }),
@@ -60,12 +68,14 @@ function createMetadata (args) {
   let metadata = fs.readFileSync('./src/util/metadata.js', {
     encoding: 'utf-8',
   });
-  let packageJSON = fs.readFileSync('./package.json');
+  let packageJSON = fs.readFileSync('./package.json', {
+    encoding: 'utf-8',
+  });
   packageJSON = JSON.parse(packageJSON);
 
   metadata = _.template(metadata);
   metadata = metadata({
-    lite: !args.full,
+    lite: !args.withImage,
     pkg: packageJSON,
   });
   metadata = [
@@ -76,6 +86,37 @@ function createMetadata (args) {
   metadata = metadata.join('');
 
   return metadata;
+}
+
+
+function createEntryPoint (args) {
+  const files = glob.sync('./src/sites/file/**.js');
+  const images = glob.sync('./src/sites/image/**.js');
+  const links = glob.sync('./src/sites/link/**.js');
+  const pastes = glob.sync('./src/sites/paste/**.js');
+
+  let handlers = [].concat(files, links, pastes);
+  if (args.withImage) {
+    handlers = handlers.concat(images);
+  }
+
+  let handler = 'import {_, $} from \'util/public\';\n';
+  fs.writeFileSync('./build/handlers.js', handler, {
+    encoding: 'utf-8',
+    mode: 0644,
+    flag: 'w',
+  });
+
+  handlers.forEach((filePath) => {
+    let handler = fs.readFileSync(filePath);
+    fs.writeFileSync('./build/handlers.js', handler, {
+      encoding: 'utf-8',
+      mode: 0644,
+      flag: 'a',
+    });
+  });
+
+  return './src/util/main.js';
 }
 
 

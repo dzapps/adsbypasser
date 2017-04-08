@@ -17,6 +17,10 @@ const GM = {
   registerMenuCommand: GM_registerMenuCommand,
   getValue: GM_getValue,
   setValue: GM_setValue,
+  xmlhttpRequest: GM_xmlhttpRequest,
+  getResourceText: GM_getResourceText,
+  addStyle: GM_addStyle,
+  getResourceURL: GM_getResourceURL,
 };
 
 

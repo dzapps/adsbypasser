@@ -9,6 +9,8 @@ export {
   template,
   isString,
   nop,
+  wait,
+  tryEvery,
 };
 
 import {
