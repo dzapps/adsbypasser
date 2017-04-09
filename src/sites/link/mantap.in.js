@@ -1,4 +1,4 @@
-$.register({
+_.register({
   rule: {
     host: [
       /^mant[ae][pb]\.in$/,
@@ -7,22 +7,18 @@ $.register({
       /^ww3\.awaremmxv\.com$/,
     ],
   },
-  ready: function () {
-    'use strict';
-
-    var a = $('a.redirect, a[target=_blank][rel=nofollow]');
-    $.openLink(a.href);
+  async ready () {
+    const a = $('a.redirect, a[target=_blank][rel=nofollow]');
+    await $.openLink(a.href);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^susutin\.com$/,
   },
-  ready: function () {
-    'use strict';
-
-    var s = $.searchScripts(/="([^"]+)",/);
-    $.openLink(s[1]);
+  async ready () {
+    const s = $.searchFromScripts(/="([^"]+)",/);
+    await $.openLink(s[1]);
   },
 });
