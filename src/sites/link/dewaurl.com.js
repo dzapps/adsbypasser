@@ -1,17 +1,12 @@
-$.register({
+_.register({
   rule: {
     host: /^www\.dewaurl\.com$/,
   },
-  ready: function () {
-    'use strict';
-
-    var f = $('.framedRedirectTopFrame');
-    $.get(f.src).then(function (html) {
-      html = $.toDOM(html);
-      var a = $('#continueButton > a', html);
-      $.openLink(a.href);
-    }).catch(function (e) {
-      _.warn(e);
-    });
+  async ready () {
+    const f = $('.framedRedirectTopFrame');
+    let html = await $.get(f.src);
+    html = $.toDOM(html);
+    const a = $('#continueButton > a', html);
+    await $.openLink(a.href);
   },
 });
