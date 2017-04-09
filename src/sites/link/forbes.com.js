@@ -1,13 +1,11 @@
-$.register({
+_.register({
   rule: {
     host: /^www\.forbes\.com$/,
   },
-  ready: function () {
-    'use strict';
-
-    var o = $.window.ox_zones;
+  async ready () {
+    const o = $.window.ox_zones;
     if (o) {
-      $.openLink(o.page_url);
+      await $.openLink(o.page_url);
     }
   },
 });
