@@ -1,26 +1,24 @@
+// XXX should remove this site
+
 // image
-$.register({
+_.register({
   rule: {
     host: /^ichan\.org$/,
     path: /^\/image\.php$/,
     query: /path=(.+)$/,
   },
-  start: function (m) {
-    'use strict';
-
-    $.openImage('/' + m.query[1]);
+  async start (m) {
+    await $.openImage('/' + m.query[1]);
   },
 });
 
 // board
-$.register({
+_.register({
   rule: {
     host: /ichan\.org$/,
   },
-  ready: function () {
-    'use strict';
-
-    $.$$('a').each(function (a) {
+  async ready () {
+    _.forEach($.$$('a'), (a) => {
       if (a.href.indexOf('/url/http://') > -1) {
         a.href = a.href.replace(/http:\/\/.+\/url\/(?=http:\/\/)/, '');
       }

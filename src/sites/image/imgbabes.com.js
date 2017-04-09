@@ -1,17 +1,15 @@
-$.register({
+_.register({
   rule: {
     host: /^www\.img(babes|flare)\.com$/,
   },
-  ready: function () {
-    'use strict';
-
-    var i = $.$('input[onclick]');
+  async ready () {
+    const i = $.$('input[onclick]');
     if (i) {
       $.window.Decode();
       return;
     }
 
-    var i = $('#this_image');
-    $.openImage(i.src);
+    const i = $('#this_image');
+    await $.openImage(i.src);
   },
 });
