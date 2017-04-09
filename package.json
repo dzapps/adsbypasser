@@ -12,7 +12,9 @@
     "wintersmith": "",
     "wintersmith-less": "",
     "webpack": "",
-    "glob": ""
+    "glob": "",
+    "mkdirp": "",
+    "mocha": ""
   },
   "scripts": {
     "build": "webpack",

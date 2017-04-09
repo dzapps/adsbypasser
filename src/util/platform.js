@@ -12,16 +12,7 @@ import {
 
 const usw = getUnsafeWindow();
 const uswProxy = getUnsafeWindowProxy();
-const GM = {
-  openInTab: GM_openInTab,
-  registerMenuCommand: GM_registerMenuCommand,
-  getValue: GM_getValue,
-  setValue: GM_setValue,
-  xmlhttpRequest: GM_xmlhttpRequest,
-  getResourceText: GM_getResourceText,
-  addStyle: GM_addStyle,
-  getResourceURL: GM_getResourceURL,
-};
+const GM = getGreaseMonkeyAPI();
 
 
 function getUnsafeWindow () {
@@ -29,8 +20,28 @@ function getUnsafeWindow () {
   try {
     w = unsafeWindow;
   } catch (e) {
+    try {
+      w = (0, eval)('this').global;
+    } catch (e) {
+    }
   }
-  return w ? w : window;
+  return w ? w : (0, eval)('this').window;
+}
+
+function getGreaseMonkeyAPI () {
+  if (typeof module !== undefined) {
+    return null;
+  }
+  return {
+    openInTab: GM_openInTab,
+    registerMenuCommand: GM_registerMenuCommand,
+    getValue: GM_getValue,
+    setValue: GM_setValue,
+    xmlhttpRequest: GM_xmlhttpRequest,
+    getResourceText: GM_getResourceText,
+    addStyle: GM_addStyle,
+    getResourceURL: GM_getResourceURL,
+  };
 }
 
 // magic property to get the original object
@@ -42,7 +53,7 @@ function getUnsafeWindowProxy () {
   var isFirefox = typeof InstallTrigger !== 'undefined';
   if (!isFirefox) {
     // other browsers does not need this
-    return unsafeWindow;
+    return usw;
   }
 
   var decorator = {

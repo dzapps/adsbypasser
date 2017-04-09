@@ -2,8 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const _ = require('lodash');
-const glob = require('glob');
 const webpack = require('webpack');
+const glob = require('glob');
+const mkdirp = require('mkdirp');
+
+
+const handlersPath = {
+  common: path.resolve(__dirname, 'build', 'handlers', 'common.js'),
+  image: path.resolve(__dirname, 'build', 'handlers', 'image.js'),
+};
 
 
 const commonConfig = {
@@ -13,7 +20,8 @@ const commonConfig = {
   },
   resolve: {
     alias: {
-      handlers: path.resolve(__dirname, 'build', 'handlers.js'),
+      'handlers_common': handlersPath.common,
+      'handlers_image': handlersPath.image,
     },
     modules: [
       path.resolve(__dirname, 'src'),
@@ -32,9 +40,7 @@ const testConfig = Object.assign({
 
 const mainConfig = Object.assign({
   entry: {
-    'adsbypasser.user': createEntryPoint({
-      withImage: true,
-    }),
+    'adsbypasser.user': './src/util/main.js',
   },
   plugins: [
     new webpack.BannerPlugin({
@@ -43,15 +49,16 @@ const mainConfig = Object.assign({
       }),
       raw: true,
     }),
+    new webpack.NormalModuleReplacementPlugin(/^__HANDLERS__$/, (resource) => {
+      resource.request = 'handlers_image';
+    }),
   ],
 }, commonConfig);
 
 
 const liteConfig = Object.assign({
   entry: {
-    'adsbypasser.lite.user': createEntryPoint({
-      withImage: false,
-    }),
+    'adsbypasser.lite.user': './src/util/main.js',
   },
   plugins: [
     new webpack.BannerPlugin({
@@ -59,6 +66,9 @@ const liteConfig = Object.assign({
         withImage: false,
       }),
       raw: true,
+    }),
+    new webpack.NormalModuleReplacementPlugin(/^__HANDLERS__$/, (resource) => {
+      resource.request = 'handlers_common';
     }),
   ],
 }, commonConfig);
@@ -89,35 +99,51 @@ function createMetadata (args) {
 }
 
 
-function createEntryPoint (args) {
+function prepareCommonHandlers (outputPath) {
+  mkdirp.sync(path.dirname(outputPath));
+
   const files = glob.sync('./src/sites/file/**.js');
-  const images = glob.sync('./src/sites/image/**.js');
   const links = glob.sync('./src/sites/link/**.js');
   const pastes = glob.sync('./src/sites/paste/**.js');
-
   let handlers = [].concat(files, links, pastes);
-  if (args.withImage) {
-    handlers = handlers.concat(images);
-  }
 
   let handler = 'import {_, $} from \'util/public\';\n';
-  fs.writeFileSync('./build/handlers.js', handler, {
+  fs.writeFileSync(outputPath, handler, {
     encoding: 'utf-8',
-    mode: 0644,
-    flag: 'w',
   });
 
   handlers.forEach((filePath) => {
     let handler = fs.readFileSync(filePath);
-    fs.writeFileSync('./build/handlers.js', handler, {
+    fs.writeFileSync(outputPath, handler, {
       encoding: 'utf-8',
-      mode: 0644,
       flag: 'a',
     });
   });
-
-  return './src/util/main.js';
 }
+
+
+function prepareImageHandlers (outputPath) {
+  mkdirp.sync(path.dirname(outputPath));
+
+  const images = glob.sync('./src/sites/image/**.js');
+
+  let handler = 'import {_, $} from \'util/public\';\nimport \'handlers_common\';\n';
+  fs.writeFileSync(outputPath, handler, {
+    encoding: 'utf-8',
+  });
+
+  images.forEach((filePath) => {
+    let handler = fs.readFileSync(filePath);
+    fs.writeFileSync(outputPath, handler, {
+      encoding: 'utf-8',
+      flag: 'a',
+    });
+  });
+}
+
+
+prepareCommonHandlers(handlersPath.common);
+prepareImageHandlers(handlersPath.image);
 
 
 module.exports = [testConfig, mainConfig, liteConfig];

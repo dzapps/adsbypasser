@@ -17,7 +17,7 @@ import {
   warn,
   info,
 } from 'util/logger';
-import 'handlers';
+import '__HANDLERS__';
 
 
 const isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
