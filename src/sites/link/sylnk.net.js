@@ -1,6 +1,6 @@
 // all blog type belong here?
 
-$.register({
+_.register({
   rule: [
     {
       host: [
@@ -68,15 +68,13 @@ $.register({
       query: /^\?lanjut=([a-zA-Z0-9\/=]+)$/,
     },
   ],
-  start: function (m) {
-    'use strict';
-    var rawLink = atob(m.query[1]);
-
-    $.openLink(rawLink);
+  async start (m) {
+    const rawLink = atob(m.query[1]);
+    await $.openLink(rawLink);
   },
 });
 
-$.register({
+_.register({
   rule: [
     {
       host: [
@@ -109,11 +107,9 @@ $.register({
       query: /go=(\w+=*)/,
     },
   ],
-  start: function (m) {
-    'use strict';
-
-    var l = atob(m.query[1]);
-    var table = {
+  async start (m) {
+    const l = atob(m.query[1]);
+    const table = {
       '!': 'a',
       ')': 'e',
       '_': 'i',
@@ -123,24 +119,22 @@ $.register({
     l = l.replace(/[!)_(*]/g, function (m) {
       return table[m];
     });
-    $.openLink(l);
+    await $.openLink(l);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^(www\.)?safelinkreview\.com$/,
     path: /^\/\w+\/cost\/([\w\.]+)\/?$/,
   },
-  start: function (m) {
-    'use strict';
-
-    var l = 'http://' + m.path[1];
-    $.openLink(l);
+  async start (m) {
+    const l = 'http://' + m.path[1];
+    await $.openLink(l);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: [
       /^designinghomey\.com$/,
@@ -152,41 +146,35 @@ $.register({
     ],
     query: /get=([^&]+)/,
   },
-  ready: function (m) {
-    'use strict';
-
-    var s = $.searchScripts(/var a='([^']+)'/);
+  async ready (m) {
+    let s = $.searchFromScripts(/const a='([^']+)'/);
     if (s) {
-      $.openLink(s[1]);
+      await $.openLink(s[1]);
       return;
     }
     s = atob(m.query[1]);
-    $.openLink(s);
+    await $.openLink(s);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^kombatch\.loncat\.pw$/,
   },
-  ready: function () {
-    'use strict';
-
-    var s = $.searchScripts(/\.open\("([^"]+)",/);
+  async ready () {
+    let s = $.searchFromScripts(/\.open\("([^"]+)",/);
     s = s[1].match(/go=([^&]+)/);
     s = atob(s[1]);
-    $.openLink(s);
+    await $.openLink(s);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^ww[23]\.picnictrans\.com$/,
   },
-  ready: function () {
-    'use strict';
-
-    var a = $('div.kiri > center > a');
-    $.openLink(a.href);
+  async ready () {
+    const a = $('div.kiri > center > a');
+    await $.openLink(a.href);
   },
 });
