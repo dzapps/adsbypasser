@@ -1,16 +1,14 @@
-$.register({
+_.register({
   rule: {
     host: [
       /^al\.ly$/,
       /^ally\.sh$/,
     ],
   },
-  ready: function () {
-    'use strict';
+  async ready () {
+    $.remove('iframe, #CashSlideDiv, #ct_catfish');
 
-    $.removeNodes('iframe, #CashSlideDiv, #ct_catfish');
-
-    var a = $('#modal-shadow');
+    const a = $('#modal-shadow');
     a.style.display = 'block';
     a = $('#modal-alert');
     a.style.left = 0;

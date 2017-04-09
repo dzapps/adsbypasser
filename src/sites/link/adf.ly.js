@@ -1,41 +1,35 @@
 (function () {
-  'use strict';
 
-  function getTokenFromRocketScript () {
-    var a = $.searchScripts(/var eu = '(?!false)(.*)'/);
-    return a ? a[1] : null;
-  }
-
-  $.register({
+  _.register({
     rule: {
       host: /^adf\.ly$/,
       path: /^\/redirecting\/(.+)$/,
     },
-    start: function (m) {
-      var url = atob(m.path[1]);
-      $.openLink(url);
+    async start (m) {
+      const url = atob(m.path[1]);
+      await $.openLink(url);
     },
   });
 
-  $.register({
+  _.register({
     rule: {
       path: /\/locked$/,
       query: /url=([^&]+)/,
     },
-    start: function (m) {
+    async start (m) {
       $.resetCookies();
-      var url = decodeURIComponent(m.query[1]);
+      const url = decodeURIComponent(m.query[1]);
       if (url.match(/^http/)) {
         // absolute path
-        $.openLink(url);
+        await $.openLink(url);
       } else {
         // related path
-        $.openLink('/' + url);
+        await $.openLink('/' + url);
       }
     },
   });
 
-  $.register({
+  _.register({
     rule: [
       // rocket loader hack
       'http://u.shareme.in/*',
@@ -43,8 +37,8 @@
 
       // generic pattern
       function () {
-        var h = $.$('html[id="main_html"]');
-        var b = $.$('body[id="home"]');
+        const h = $.$('html[id="main_html"]');
+        const b = $.$('body[id="home"]');
         if (h && b) {
           return true;
         } else {
@@ -52,7 +46,7 @@
         }
       },
     ],
-    start: function () {
+    async start () {
       // Rocket Loader will modify DOM before `ready()` can do anything,
       // so we hack `document.write` to block CloudFlare's main script.
       // after this the inline script will fail, and leave DOM alone.
@@ -60,15 +54,15 @@
       // break anti-adblock script
       $.window.btoa = _.nop;
     },
-    ready: function () {
+    async ready () {
       // check if this is ad page
-      var h = $.$('#main_html'), b = $.$('#home');
+      let h = $.$('#main_html'), b = $.$('#home');
       if (!h || !b || h.nodeName !== 'HTML' || b.nodeName !== 'BODY') {
         // this is not a ad page
         return;
       }
 
-      $.removeNodes('iframe');
+      $.remove('iframe');
 
       // disable cookie check
       $.window.cookieCheck = _.nop;
@@ -79,13 +73,13 @@
         $.window.close_bar();
         return;
       }
-      var a = h.indexOf('!HiTommy');
+      let a = h.indexOf('!HiTommy');
       if (a >= 0) {
         h = h.substring(0, a);
       }
       a = '';
       b = '';
-      for (var i = 0; i < h.length; ++i) {
+      for (let i = 0; i < h.length; ++i) {
         if (i % 2 === 0) {
           a = a + h.charAt(i);
         } else {
@@ -97,8 +91,13 @@
       if (location.hash) {
         h += location.hash;
       }
-      $.openLink(h);
+      await $.openLink(h);
     },
   });
+
+  function getTokenFromRocketScript () {
+    const a = $.searchFromScripts(/const eu = '(?!false)(.*)'/);
+    return a ? a[1] : null;
+  }
 
 })();
