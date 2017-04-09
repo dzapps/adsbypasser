@@ -1,4 +1,4 @@
-$.register({
+_.register({
   rule: {
     host: [
     	/^ethi\.in$/,
@@ -6,10 +6,8 @@ $.register({
     ],
     path: /^\/i\/\d+$/,
   },
-  ready: function () {
-    'use strict';
-
-    var a = $('#wrapper > [class^="tombo"] > a[target="_blank"]');
-    $.openLink(a.href);
+  async ready () {
+    const a = $('#wrapper > [class^="tombo"] > a[target="_blank"]');
+    await $.openLink(a.href);
   },
 });
