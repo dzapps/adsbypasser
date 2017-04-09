@@ -1,12 +1,10 @@
-$.register({
+_.register({
   rule: {
     host: /^www\.comicon\.com\.br$/,
     path: /^\/redir\.php$/,
   },
-  ready: function () {
-    'use strict';
-
-    var a = $('#link');
-    $.openLink(a.href);
+  async ready () {
+    const a = $('#link');
+    await $.openLink(a.href);
   },
 });

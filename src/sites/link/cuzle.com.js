@@ -1,4 +1,4 @@
-$.register({
+_.register({
   rule: {
     host: [
       /^www\.cuzle\.com$/,
@@ -7,10 +7,8 @@ $.register({
     path: /^\/$/,
     query: /^\?(.+)=$/,
   },
-  start: function (m) {
-    'use strict';
-
-    var url = atob(m.query[1]);
-    $.openLink(url);
+  async start (m) {
+    const url = atob(m.query[1]);
+    await $.openLink(url);
   },
 });
