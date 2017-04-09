@@ -1,24 +1,20 @@
-$.register({
+_.register({
   rule: {
     host: /^link\.tl$/,
     path: /^\/fly\/go\.php$/,
   },
-  ready: function () {
-    'use strict';
-
-    var a = $('.skip_btn2 a');
-    $.openLink(a.href);
+  async ready () {
+    const a = $('.skip_btn2 a');
+    await $.openLink(a.href);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^link\.tl$/,
     path: /^\/(.+)$/,
   },
-  start: function (m) {
-    'use strict';
-
-    $.openLink('/fly/go.php?to=' + m.path[1]);
+  async start (m) {
+    await $.openLink('/fly/go.php?to=' + m.path[1]);
   },
 });

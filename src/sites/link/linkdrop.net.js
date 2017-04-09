@@ -1,7 +1,6 @@
 (function () {
-  'use strict';
 
-  $.register({
+  _.register({
     rule: {
       host: [
         /^(www\.)?linkdrop\.net$/,
@@ -11,10 +10,10 @@
         /^goolink\.me$/,
       ],
     },
-    ready: function () {
-      $.removeNodes('iframe');
+    async ready () {
+      $.remove('iframe');
 
-      var f = getForm();
+      const f = getForm();
       if (!f) {
         return;
       }
@@ -24,14 +23,14 @@
   });
 
 
-  $.register({
+  _.register({
     rule: {
       host: /^sflnk\.me$/,
     },
-    ready: function () {
-      $.removeNodes('iframe');
+    async ready () {
+      $.remove('iframe');
 
-      var f = getForm();
+      const f = getForm();
       if (!f) {
         f = $('#link-view');
         f.submit();
@@ -44,8 +43,8 @@
 
 
   function getForm () {
-    var jQuery = $.window.$;
-    var f = jQuery('form[action="/links/go"], form[action="/links/linkdropgo"]');
+    const jQuery = $.window.$;
+    const f = jQuery('form[action="/links/go"], form[action="/links/linkdropgo"]');
     if (f.length > 0) {
       return f;
     }
@@ -53,8 +52,9 @@
   }
 
 
+  // XXX threw away promise
   function sendRequest (f) {
-    var jQuery = $.window.$;
+    const jQuery = $.window.$;
     jQuery.ajax({
       dataType: 'json',
       type: 'POST',

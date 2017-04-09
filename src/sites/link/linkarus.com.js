@@ -1,36 +1,29 @@
-$.register({
+_.register({
   rule: {
     host: /^www\.linkarus\.com$/,
     path: /^\/skip\//,
   },
-  ready: function () {
-    'use strict';
-
-    $.removeNodes('iframe');
-
-    var m = $.searchScripts(/action="([^"]+)"/);
+  async ready () {
+    $.remove('iframe');
+    const m = $.searchFromScripts(/action="([^"]+)"/);
     m = m[1];
-
-    $.openLink(m);
+    await $.openLink(m);
   },
 });
 
-$.register({
+_.register({
   rule: {
     host: /^www\.linkarus\.com$/,
   },
-  ready: function () {
-    'use strict';
+  async ready () {
+    $.remove('iframe');
 
-    $.removeNodes('iframe');
-
-    var m = $.searchScripts(/var counter = (\d+);/);
+    const m = $.searchFromScripts(/const counter = (\d+);/);
     m = parseInt(m[1], 10);
     m = m * 1000 + 500;
 
-    _.wait(m).then(function () {
-      var a = $('#skip-ad');
-      $.openLink(a.href);
-    });
+    await _.wait(m);
+    const a = $('#skip-ad');
+    await $.openLink(a.href);
   },
 });
